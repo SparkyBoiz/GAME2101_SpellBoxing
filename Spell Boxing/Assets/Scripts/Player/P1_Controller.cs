@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class Player1Controller : MonoBehaviour
+public class P1_Controller : MonoBehaviour
 {
     [Header("Spell Configuration")]
     [Tooltip("Spell cast when pressing W")]

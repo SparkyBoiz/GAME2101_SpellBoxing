@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class Player2Controller : MonoBehaviour
+public class P2_Controller : MonoBehaviour
 {
     [Header("Spell Configuration")]
     [Tooltip("Spell cast when pressing Up Arrow")]

@@ -44,9 +44,9 @@ public class SpellCollision : MonoBehaviour
                 Debug.Log("Spells collided with DIFFERENT type! Fizzling out.");
             }
 
-            if (TurnManager.Instance != null)
+            if (M_Turn.Instance != null)
             {
-                TurnManager.Instance.OnSpellCollision(sameType);
+                M_Turn.Instance.OnSpellCollision(sameType);
             }
 
             Destroy(gameObject);

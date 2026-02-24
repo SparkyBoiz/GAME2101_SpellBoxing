@@ -1,14 +1,14 @@
 using UnityEngine;
 
-public class TurnManager : MonoBehaviour
+public class M_Turn : MonoBehaviour
 {
-    public static TurnManager Instance { get; private set; }
+    public static M_Turn Instance { get; private set; }
 
     [Header("Player References")]
-    [SerializeField] private Player1Controller player1;
-    [SerializeField] private Player2Controller player2;
-    [SerializeField] private PlayerHealth player1Health;
-    [SerializeField] private PlayerHealth player2Health;
+    [SerializeField] private P1_Controller player1;
+    [SerializeField] private P2_Controller player2;
+    [SerializeField] private P_Health player1Health;
+    [SerializeField] private P_Health player2Health;
 
     [Header("Turn Settings")]
     [Tooltip("Time in seconds for each player's turn.")]
