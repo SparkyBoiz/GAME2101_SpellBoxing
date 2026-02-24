@@ -19,6 +19,8 @@ public class M_Turn : MonoBehaviour
     private bool isPlayer1Turn;
 
     private bool player1IsAttacker = true;
+    public bool Player1IsAttacker => player1IsAttacker;
+    public event System.Action<bool> OnAttackerChanged;
     private bool isSecondInput = false;
     private bool waitingForResolution = false;
     private bool collisionProcessed = false;
@@ -64,7 +66,6 @@ public class M_Turn : MonoBehaviour
         }
         else
         {
-            // Both players finished
             waitingForResolution = true;
             if (player1 != null) player1.enabled = false;
             if (player2 != null) player2.enabled = false;
@@ -95,7 +96,7 @@ public class M_Turn : MonoBehaviour
             }
 
             player1IsAttacker = !player1IsAttacker;
-            Invoke(nameof(StartRound), 1f);
+            StartRound();
         }
     }
 
@@ -110,6 +111,7 @@ public class M_Turn : MonoBehaviour
         currentTurnTimer = turnDuration;
         UpdatePlayerControl();
         Debug.Log($"New Round! Attacker: {(player1IsAttacker ? "Player 1" : "Player 2")}");
+        OnAttackerChanged?.Invoke(player1IsAttacker);
     }
 
     private void UpdatePlayerControl()
@@ -147,6 +149,6 @@ public class M_Turn : MonoBehaviour
             player1IsAttacker = !player1IsAttacker;
         }
 
-        Invoke(nameof(StartRound), 1f);
+        StartRound();
     }
 }
