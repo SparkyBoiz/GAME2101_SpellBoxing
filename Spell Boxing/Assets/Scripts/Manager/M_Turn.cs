@@ -75,6 +75,7 @@ public class M_Turn : MonoBehaviour
 
             if (p1HasSpell && p2HasSpell)
             {
+                collisionProcessed = false;
                 if (player1 != null) player1.ExecuteQueuedSpell();
                 if (player2 != null) player2.ExecuteQueuedSpell();
                 return;
@@ -103,7 +104,6 @@ public class M_Turn : MonoBehaviour
     private void StartRound()
     {
         waitingForResolution = false;
-        collisionProcessed = false;
         isSecondInput = false;
         
         isPlayer1Turn = player1IsAttacker;
