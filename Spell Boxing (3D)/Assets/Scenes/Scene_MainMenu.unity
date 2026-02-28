@@ -425,10 +425,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 120178425176077693, guid: 922f2dcecd9d2154fb3a6ad15026578a, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: a9bad46d7acd35948ae3cc5e48648419, type: 3}
+    - target: {fileID: 613675213258986288, guid: 922f2dcecd9d2154fb3a6ad15026578a, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: bd83b790224987c448293f9d49957067, type: 3}
     - target: {fileID: 3566884978217434733, guid: 922f2dcecd9d2154fb3a6ad15026578a, type: 3}
       propertyPath: m_Name
       value: Canvas_MainMenu
       objectReference: {fileID: 0}
+    - target: {fileID: 7935957782859588694, guid: 922f2dcecd9d2154fb3a6ad15026578a, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 077b3c77b4c74f44ea911597f2d10765, type: 3}
     - target: {fileID: 8266457968455422373, guid: 922f2dcecd9d2154fb3a6ad15026578a, type: 3}
       propertyPath: m_Pivot.x
       value: 0
