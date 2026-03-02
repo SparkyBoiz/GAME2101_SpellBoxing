@@ -6,6 +6,12 @@ public class P_Health : MonoBehaviour
     [SerializeField] private int maxHealth = 100;
     [SerializeField] private int currentHealth;
 
+    public int CurrentHealth => currentHealth;
+    public int MaxHealth => maxHealth;
+
+    // Event to notify UI elements of health changes
+    public event System.Action<int, int> OnHealthChanged;
+
     private Animator animator;
 
     // Hashed parameter IDs for performance
@@ -16,12 +22,16 @@ public class P_Health : MonoBehaviour
     {
         currentHealth = maxHealth;
         animator = GetComponent<Animator>();
+
+        // Notify listeners of the initial health value
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
     }
 
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
         Debug.Log($"{gameObject.name} took {damage} damage. Current Health: {currentHealth}");
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
 
         if (animator != null)
         {

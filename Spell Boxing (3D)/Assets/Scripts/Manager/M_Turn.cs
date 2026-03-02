@@ -18,6 +18,9 @@ public class M_Turn : MonoBehaviour
     private float currentTurnTimer;
     private bool isPlayer1Turn;
 
+    public float CurrentTurnTimer => currentTurnTimer;
+    public float TurnDuration => turnDuration;
+
     private bool player1IsAttacker = true;
     public Vector3 SpellTargetPosition { get; private set; }
     public bool Player1IsAttacker => player1IsAttacker;
@@ -145,14 +148,14 @@ public class M_Turn : MonoBehaviour
                 AudioManager.Instance.PlaySpellMatchSFX(spellType);
             }
 
-            Debug.Log($"Spells matched! Damage dealt to {(player1IsAttacker ? "Player 2" : "Player 1")}.");
+            Debug.Log($"Spells matched! Damage dealt to {(player1IsAttacker ? "Player 1" : "Player 2")}.");
             if (player1IsAttacker)
             {
-                if (player2Health != null) player2Health.TakeDamage(damageAmount);
+                if (player1Health != null) player1Health.TakeDamage(damageAmount);
             }
             else
             {
-                if (player1Health != null) player1Health.TakeDamage(damageAmount);
+                if (player2Health != null) player2Health.TakeDamage(damageAmount);
             }
         }
         else
