@@ -20,6 +20,7 @@ public class M_Turn : MonoBehaviour
 
     public float CurrentTurnTimer => currentTurnTimer;
     public float TurnDuration => turnDuration;
+    public bool IsPlayer1Turn => isPlayer1Turn;
 
     private bool player1IsAttacker = true;
     public Vector3 SpellTargetPosition { get; private set; }
