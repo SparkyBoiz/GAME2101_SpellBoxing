@@ -46,7 +46,7 @@ public class SpellCollision : MonoBehaviour
 
             if (M_Turn.Instance != null)
             {
-                M_Turn.Instance.OnSpellCollision(sameType);
+                M_Turn.Instance.OnSpellCollision(sameType, spellType);
             }
 
             Destroy(gameObject);

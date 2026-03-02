@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: -5075180204119435734}
   - component: {fileID: 6291260457780999497}
   - component: {fileID: 4395732547564533709}
+  - component: {fileID: 9048657913152609801}
   m_Layer: 0
   m_Name: Thunder Spear
   m_TagString: Untagged
@@ -168,3 +169,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpellMovement
   speed: 10
+--- !u!114 &9048657913152609801
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9195636573610686190}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 266c51ccc8790d74b870b088659c31dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpellData
+  spellAnimationId: 3

@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: -4266421990289821619}
   - component: {fileID: 4104878368603939898}
   - component: {fileID: 8235587648428325491}
+  - component: {fileID: 1432308101628110215}
   m_Layer: 0
   m_Name: Tsunami
   m_TagString: Untagged
@@ -168,3 +169,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpellMovement
   speed: 10
+--- !u!114 &1432308101628110215
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8262664951297141116}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 266c51ccc8790d74b870b088659c31dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpellData
+  spellAnimationId: 4

@@ -19,6 +19,7 @@ public class M_Turn : MonoBehaviour
     private bool isPlayer1Turn;
 
     private bool player1IsAttacker = true;
+    public Vector3 SpellTargetPosition { get; private set; }
     public bool Player1IsAttacker => player1IsAttacker;
     public event System.Action<bool> OnAttackerChanged;
     private bool isSecondInput = false;
@@ -43,6 +44,12 @@ public class M_Turn : MonoBehaviour
     private void Update()
     {
         if (waitingForResolution) return;
+
+        // Continuously update the target position to be the midpoint between players.
+        if (player1 != null && player2 != null)
+        {
+            SpellTargetPosition = (player1.transform.position + player2.transform.position) / 2f;
+        }
 
         currentTurnTimer -= Time.deltaTime;
 
@@ -126,13 +133,18 @@ public class M_Turn : MonoBehaviour
         if (player2 != null) player2.OnSpellCast -= SwitchTurn;
     }
 
-    public void OnSpellCollision(bool sameType)
+    public void OnSpellCollision(bool sameType, SpellType spellType)
     {
         if (collisionProcessed) return;
         collisionProcessed = true;
 
         if (sameType)
         {
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlaySpellMatchSFX(spellType);
+            }
+
             Debug.Log($"Spells matched! Damage dealt to {(player1IsAttacker ? "Player 2" : "Player 1")}.");
             if (player1IsAttacker)
             {
@@ -145,6 +157,11 @@ public class M_Turn : MonoBehaviour
         }
         else
         {
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlayFizzleSFX();
+            }
+
             Debug.Log("Spells fizzled! Attacker priority swaps.");
             player1IsAttacker = !player1IsAttacker;
         }
