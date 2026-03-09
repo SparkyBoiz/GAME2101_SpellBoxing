@@ -155,7 +155,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpellCollision
   spellType: 1
-  destructionEffect: {fileID: 0}
+  destructionEffect: {fileID: 3153472991145048103, guid: 3407e378c048bb5438424b28c7740b48, type: 3}
 --- !u!114 &5838937167166179204
 MonoBehaviour:
   m_ObjectHideFlags: 0
