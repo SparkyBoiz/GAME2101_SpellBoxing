@@ -49,7 +49,6 @@ public class M_Turn : MonoBehaviour
     {
         if (waitingForResolution) return;
 
-        // Continuously update the target position to be the midpoint between players.
         if (player1 != null && player2 != null)
         {
             SpellTargetPosition = (player1.transform.position + player2.transform.position) / 2f;
@@ -59,7 +58,6 @@ public class M_Turn : MonoBehaviour
 
         if (currentTurnTimer <= 0f)
         {
-            Debug.Log("Turn Timer Expired!");
             SwitchTurn();
         }
     }
@@ -94,17 +92,15 @@ public class M_Turn : MonoBehaviour
 
             if (p1HasSpell)
             {
-                Debug.Log("Player 2 timed out! Player 1's spell is discarded.");
                 if (player1 != null) player1.DiscardQueuedSpell();
             }
             else if (p2HasSpell)
             {
-                Debug.Log("Player 1 timed out! Player 2's spell is discarded.");
                 if (player2 != null) player2.DiscardQueuedSpell();
             }
             else
             {
-                Debug.Log("Both players timed out! No damage dealt.");
+                
             }
 
             player1IsAttacker = !player1IsAttacker;

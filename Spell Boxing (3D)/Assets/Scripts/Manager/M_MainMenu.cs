@@ -12,7 +12,6 @@ public class M_MainMenu : MonoBehaviour
         SceneManager.LoadScene(1);
     }
 
-    // Go Back button
 
     public void GoBack()
     {
@@ -22,6 +21,5 @@ public class M_MainMenu : MonoBehaviour
     public void ExitGame()
     {
         Application.Quit();
-        Debug.Log("Game Quit");
     }
 }

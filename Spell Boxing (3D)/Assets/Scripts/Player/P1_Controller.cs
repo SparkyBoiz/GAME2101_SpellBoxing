@@ -31,7 +31,6 @@ public class P1_Controller : MonoBehaviour
     private InputAction castSAction;
     private InputAction castDAction;
 
-    // Hashed parameter IDs for performance
     private static readonly int IsAttackingHash = Animator.StringToHash("isAttacking");
     private static readonly int SpellTypeHash = Animator.StringToHash("spellType");
 
@@ -91,7 +90,6 @@ public class P1_Controller : MonoBehaviour
         Vector3 spawnPos = castPoint != null ? castPoint.position : transform.position;
         Quaternion spawnRot = castPoint != null ? castPoint.rotation : transform.rotation;
 
-        // Set spell type for animation
         var spellData = queuedSpell.GetComponent<SpellData>();
         if (spellData != null)
         {
@@ -101,8 +99,6 @@ public class P1_Controller : MonoBehaviour
         Instantiate(queuedSpell, spawnPos, spawnRot);
         queuedSpell = null;
 
-        // It's often better to reset this at the end of the attack animation
-        // using an Animation Event.
         animator.SetBool(IsAttackingHash, false);
     }
 

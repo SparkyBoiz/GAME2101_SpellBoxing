@@ -5,8 +5,8 @@ public class AudioManager : MonoBehaviour
     public static AudioManager Instance { get; private set; }
 
     [Header("Audio Sources")]
-    [SerializeField] private AudioSource sfxSource; // For one-shot sound effects
-    [SerializeField] private AudioSource musicSource; // For looping background music
+    [SerializeField] private AudioSource sfxSource;
+    [SerializeField] private AudioSource musicSource;
 
     [Header("Volume Settings")]
     [Range(0f, 1f)]
@@ -38,7 +38,7 @@ public class AudioManager : MonoBehaviour
         else
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); // Make it persistent across scenes
+            DontDestroyOnLoad(gameObject);
         }
     }
 
@@ -62,8 +62,6 @@ public class AudioManager : MonoBehaviour
 
     private void Update()
     {
-        // This ensures that if you change the volume in the Inspector during runtime,
-        // the AudioSource components are updated. This is great for live-tweaking.
         if (musicSource != null && musicSource.volume != musicVolume)
         {
             musicSource.volume = musicVolume;

@@ -1,10 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// Manages a health bar UI element, updating it based on events from a P_Health component.
-/// Can use either a UI Image with Fill Amount or a UI Slider.
-/// </summary>
 public class HealthBarUI : MonoBehaviour
 {
     [Tooltip("The health component of the player to track.")]
@@ -22,7 +18,6 @@ public class HealthBarUI : MonoBehaviour
         if (playerHealth != null)
         {
             playerHealth.OnHealthChanged += UpdateHealthBar;
-            // Also update the bar immediately on enable to reflect current state
             UpdateHealthBar(playerHealth.CurrentHealth, playerHealth.MaxHealth);
         }
     }
@@ -35,14 +30,8 @@ public class HealthBarUI : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Updates the health bar's visual representation based on current and max health.
-    /// </summary>
-    /// <param name="currentHealth">The player's current health.</param>
-    /// <param name="maxHealth">The player's maximum health.</param>
     private void UpdateHealthBar(int currentHealth, int maxHealth)
     {
-        // Handle Image fill
         if (healthBarFill != null)
         {
             if (maxHealth <= 0)
@@ -55,7 +44,6 @@ public class HealthBarUI : MonoBehaviour
             }
         }
 
-        // Handle Slider value
         if (healthBarSlider != null)
         {
             if (maxHealth <= 0)
