@@ -1,33 +1,41 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+
+public enum InputDirection
+{
+    Up,
+    Down,
+    Left,
+    Right
+}
+
+[System.Serializable]
+public struct SpellSequence
+{
+    public string name;
+    public List<InputDirection> sequence;
+    public GameObject spellPrefab;
+}
 
 public class P_Controller : MonoBehaviour
 {
     [Header("Input Bindings")]
-    [Tooltip("Input binding for the Up spell")]
+    [Tooltip("Input binding for the Up direction")]
     [SerializeField] private string upBinding = "<Keyboard>/w";
 
-    [Tooltip("Input binding for the Left spell")]
+    [Tooltip("Input binding for the Left direction")]
     [SerializeField] private string leftBinding = "<Keyboard>/a";
 
-    [Tooltip("Input binding for the Down spell")]
+    [Tooltip("Input binding for the Down direction")]
     [SerializeField] private string downBinding = "<Keyboard>/s";
 
-    [Tooltip("Input binding for the Right spell")]
+    [Tooltip("Input binding for the Right direction")]
     [SerializeField] private string rightBinding = "<Keyboard>/d";
 
-    [Header("Spell Configuration")]
-    [Tooltip("Spell cast when pressing Up")]
-    [SerializeField] private GameObject spellPrefabUp;
-
-    [Tooltip("Spell cast when pressing Left")]
-    [SerializeField] private GameObject spellPrefabLeft;
-
-    [Tooltip("Spell cast when pressing Down")]
-    [SerializeField] private GameObject spellPrefabDown;
-
-    [Tooltip("Spell cast when pressing Right")]
-    [SerializeField] private GameObject spellPrefabRight;
+    [Header("Spell Sequences")]
+    [Tooltip("Define combinations of directions to cast specific spells.")]
+    [SerializeField] private List<SpellSequence> spellSequences = new List<SpellSequence>();
 
     [Header("Cast Settings")]
     [Tooltip("Optional: The transform where spells will spawn. If null, uses the player's position.")]
@@ -37,6 +45,7 @@ public class P_Controller : MonoBehaviour
 
     private GameObject queuedSpell;
     public bool HasQueuedSpell => queuedSpell != null;
+    private List<InputDirection> currentInputSequence = new List<InputDirection>();
 
     private Animator animator;
     private InputAction castUpAction;
@@ -56,10 +65,10 @@ public class P_Controller : MonoBehaviour
         castDownAction = new InputAction(type: InputActionType.Button, binding: downBinding);
         castRightAction = new InputAction(type: InputActionType.Button, binding: rightBinding);
 
-        castUpAction.performed += ctx => CastSpell(spellPrefabUp);
-        castLeftAction.performed += ctx => CastSpell(spellPrefabLeft);
-        castDownAction.performed += ctx => CastSpell(spellPrefabDown);
-        castRightAction.performed += ctx => CastSpell(spellPrefabRight);
+        castUpAction.performed += ctx => OnInputDirection(InputDirection.Up);
+        castLeftAction.performed += ctx => OnInputDirection(InputDirection.Left);
+        castDownAction.performed += ctx => OnInputDirection(InputDirection.Down);
+        castRightAction.performed += ctx => OnInputDirection(InputDirection.Right);
     }
 
     private void OnEnable()
@@ -76,13 +85,71 @@ public class P_Controller : MonoBehaviour
         castLeftAction.Disable();
         castDownAction.Disable();
         castRightAction.Disable();
+        currentInputSequence.Clear();
+    }
+
+    private void OnInputDirection(InputDirection dir)
+    {
+        if (HasQueuedSpell) return;
+
+        currentInputSequence.Add(dir);
+
+        foreach (var spellSeq in spellSequences)
+        {
+            if (IsExactMatch(currentInputSequence, spellSeq.sequence))
+            {
+                CastSpell(spellSeq.spellPrefab);
+                currentInputSequence.Clear();
+                return;
+            }
+        }
+
+        bool isValidPrefix = false;
+        foreach (var spellSeq in spellSequences)
+        {
+            if (IsPrefix(currentInputSequence, spellSeq.sequence))
+            {
+                isValidPrefix = true;
+                break;
+            }
+        }
+
+        if (!isValidPrefix)
+        {
+            currentInputSequence.Clear();
+            
+            if (AudioManager.Instance != null)
+            {
+                
+            }
+        }
+    }
+
+    private bool IsExactMatch(List<InputDirection> input, List<InputDirection> target)
+    {
+        if (target == null || input.Count != target.Count) return false;
+        for (int i = 0; i < input.Count; i++)
+        {
+            if (input[i] != target[i]) return false;
+        }
+        return true;
+    }
+
+    private bool IsPrefix(List<InputDirection> input, List<InputDirection> target)
+    {
+        if (target == null || input.Count > target.Count) return false;
+        for (int i = 0; i < input.Count; i++)
+        {
+            if (input[i] != target[i]) return false;
+        }
+        return true;
     }
 
     private void CastSpell(GameObject spellPrefab)
     {
         if (spellPrefab == null)
         {
-            Debug.LogWarning($"A spell prefab is missing on {gameObject.name}!");
+
             return;
         }
 
