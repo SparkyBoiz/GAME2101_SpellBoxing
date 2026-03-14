@@ -5,8 +5,8 @@ public class M_Turn : MonoBehaviour
     public static M_Turn Instance { get; private set; }
 
     [Header("Player References")]
-    [SerializeField] private P1_Controller player1;
-    [SerializeField] private P2_Controller player2;
+    [SerializeField] private P_Controller player1;
+    [SerializeField] private P_Controller player2;
     [SerializeField] private P_Health player1Health;
     [SerializeField] private P_Health player2Health;
 

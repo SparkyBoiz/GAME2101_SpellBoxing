@@ -50,10 +50,8 @@ public class P_Health : MonoBehaviour
                 AudioManager.Instance.PlayDeathSFX();
             }
             
-            var p1 = GetComponent<P1_Controller>();
-            if (p1 != null) p1.enabled = false;
-            var p2 = GetComponent<P2_Controller>();
-            if (p2 != null) p2.enabled = false;
+            var playerController = GetComponent<P_Controller>();
+            if (playerController != null) playerController.enabled = false;
             
             SceneManager.LoadScene("Scene_MainMenu");
         }
