@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -41,6 +42,14 @@ public class P_Controller : MonoBehaviour
     [Tooltip("Optional: The transform where spells will spawn. If null, uses the player's position.")]
     [SerializeField] private Transform castPoint;
 
+    [Header("Feedback Settings")]
+    [Tooltip("The transform to move for feedback. If null, uses this player's transform.")]
+    [SerializeField] private Transform feedbackTarget;
+    [Tooltip("How far the player moves to provide input feedback.")]
+    [SerializeField] private float inputFeedbackDistance = 0.5f;
+    [Tooltip("How fast the player moves for input feedback.")]
+    [SerializeField] private float inputFeedbackSpeed = 15f;
+
     public event System.Action OnSpellCast;
 
     private GameObject queuedSpell;
@@ -56,6 +65,9 @@ public class P_Controller : MonoBehaviour
     private static readonly int IsAttackingHash = Animator.StringToHash("isAttacking");
     private static readonly int SpellTypeHash = Animator.StringToHash("spellType");
 
+    private Vector3 initialPosition;
+    private Coroutine feedbackCoroutine;
+
     private void Awake()
     {
         animator = GetComponent<Animator>();
@@ -69,6 +81,15 @@ public class P_Controller : MonoBehaviour
         castLeftAction.performed += ctx => OnInputDirection(InputDirection.Left);
         castDownAction.performed += ctx => OnInputDirection(InputDirection.Down);
         castRightAction.performed += ctx => OnInputDirection(InputDirection.Right);
+    }
+
+    private void Start()
+    {
+        if (feedbackTarget == null)
+        {
+            feedbackTarget = transform;
+        }
+        initialPosition = feedbackTarget.position;
     }
 
     private void OnEnable()
@@ -98,6 +119,7 @@ public class P_Controller : MonoBehaviour
         {
             if (IsExactMatch(currentInputSequence, spellSeq.sequence))
             {
+                TriggerFeedback(dir);
                 CastSpell(spellSeq.spellPrefab);
                 currentInputSequence.Clear();
                 return;
@@ -114,7 +136,11 @@ public class P_Controller : MonoBehaviour
             }
         }
 
-        if (!isValidPrefix)
+        if (isValidPrefix)
+        {
+            TriggerFeedback(dir);
+        }
+        else
         {
             currentInputSequence.Clear();
             
@@ -143,6 +169,46 @@ public class P_Controller : MonoBehaviour
             if (input[i] != target[i]) return false;
         }
         return true;
+    }
+
+    private void TriggerFeedback(InputDirection dir)
+    {
+        if (feedbackCoroutine != null) StopCoroutine(feedbackCoroutine);
+        feedbackCoroutine = StartCoroutine(InputFeedbackRoutine(dir));
+    }
+
+    private IEnumerator InputFeedbackRoutine(InputDirection dir)
+    {
+        Vector3 targetOffset = Vector3.zero;
+        switch (dir)
+        {
+            case InputDirection.Up: targetOffset = feedbackTarget.up; break;
+            case InputDirection.Down: targetOffset = -feedbackTarget.up; break;
+            case InputDirection.Left: targetOffset = -feedbackTarget.right; break;
+            case InputDirection.Right: targetOffset = feedbackTarget.right; break;
+        }
+
+        Vector3 targetPos = initialPosition + (targetOffset * inputFeedbackDistance);
+        Vector3 startPos = feedbackTarget.position;
+
+        float t = 0;
+        while (t < 1f)
+        {
+            t += Time.deltaTime * inputFeedbackSpeed;
+            feedbackTarget.position = Vector3.Lerp(startPos, targetPos, t);
+            yield return null;
+        }
+
+        t = 0;
+        startPos = feedbackTarget.position;
+        while (t < 1f)
+        {
+            t += Time.deltaTime * inputFeedbackSpeed;
+            feedbackTarget.position = Vector3.Lerp(startPos, initialPosition, t);
+            yield return null;
+        }
+
+        feedbackTarget.position = initialPosition;
     }
 
     private void CastSpell(GameObject spellPrefab)

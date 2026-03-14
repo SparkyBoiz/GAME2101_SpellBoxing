@@ -3582,6 +3582,9 @@ MonoBehaviour:
     sequence: 01000000030000000200000002000000
     spellPrefab: {fileID: 8262664951297141116, guid: 2095150abe33f844da0e080addc1f4c2, type: 3}
   castPoint: {fileID: 0}
+  feedbackTarget: {fileID: 1746579118}
+  inputFeedbackDistance: 0.5
+  inputFeedbackSpeed: 15
 --- !u!136 &1356978267
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -4533,6 +4536,9 @@ MonoBehaviour:
     sequence: 01000000030000000200000002000000
     spellPrefab: {fileID: 8262664951297141116, guid: 2095150abe33f844da0e080addc1f4c2, type: 3}
   castPoint: {fileID: 0}
+  feedbackTarget: {fileID: 1356978263}
+  inputFeedbackDistance: 0.5
+  inputFeedbackSpeed: 15
 --- !u!1 &1840868437 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2439154410183407859, guid: f2f9f5cff2cb37a48a79e31782e865de, type: 3}
