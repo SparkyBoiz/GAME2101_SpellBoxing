@@ -3994,7 +3994,7 @@ GameObject:
   - component: {fileID: 1667312176}
   - component: {fileID: 1667312175}
   m_Layer: 5
-  m_Name: Image
+  m_Name: UI_SpellBook
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
