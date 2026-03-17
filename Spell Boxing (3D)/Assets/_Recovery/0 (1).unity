@@ -2131,7 +2131,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::M_Turn
   player1: {fileID: 1356978265}
-  player2: {fileID: 1746579127}
+  player2: {fileID: 0}
   player1Health: {fileID: 1356978264}
   player2Health: {fileID: 1746579119}
   turnDuration: 5
@@ -3399,24 +3399,12 @@ MonoBehaviour:
   leftBinding: <Keyboard>/a
   downBinding: <Keyboard>/s
   rightBinding: <Keyboard>/d
-  spellSequences:
-  - name: Earth Spikes
-    sequence: 00000000020000000200000003000000
-    spellPrefab: {fileID: 1344509096363949666, guid: 4c0dec3b4c11ffc478037e7eec194e15, type: 3}
-  - name: Fireball
-    sequence: 02000000010000000300000000000000
-    spellPrefab: {fileID: 55926708485792415, guid: f88a9416a20dd5c42a08f03990b6163b, type: 3}
-  - name: Thunder Spear
-    sequence: 00000000010000000300000002000000
-    spellPrefab: {fileID: 9195636573610686190, guid: fbb6fec88f9bb6a4eb822a8e64fd8323, type: 3}
-  - name: Tsunami
-    sequence: 01000000030000000200000002000000
-    spellPrefab: {fileID: 8262664951297141116, guid: 2095150abe33f844da0e080addc1f4c2, type: 3}
+  spellSequences: []
   castPoint: {fileID: 0}
-  feedbackTarget: {fileID: 1356978263}
+  feedbackTarget: {fileID: 0}
   inputFeedbackDistance: 0.5
   inputFeedbackSpeed: 15
-  playerRenderer: {fileID: 1356978271}
+  playerRenderer: {fileID: 0}
   errorFlashColor: {r: 1, g: 0, b: 0, a: 1}
   errorFlashDuration: 0.2
 --- !u!136 &1356978267
@@ -3754,7 +3742,7 @@ Transform:
   m_GameObject: {fileID: 1540998451}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.7071068, z: 0.7071068, w: 0}
-  m_LocalPosition: {x: -0.037, y: 1.04, z: -0.008}
+  m_LocalPosition: {x: -0.037, y: 1.04, z: -5.63}
   m_LocalScale: {x: 0.19999996, y: 0.2, z: 0.2}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4178,7 +4166,7 @@ Transform:
   m_GameObject: {fileID: 1736280712}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: -0.063, y: 1.04, z: -0.005}
+  m_LocalPosition: {x: -0.063, y: 1.04, z: 0.13599996}
   m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4350,28 +4338,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2385907c630275445a5407bb2430ac71, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::P1_Controller
-  upBinding: <Keyboard>/upArrow
-  leftBinding: <Keyboard>/leftArrow
-  downBinding: <Keyboard>/downArrow
-  rightBinding: <Keyboard>/rightArrow
-  spellSequences:
-  - name: Earth Spikes
-    sequence: 00000000020000000200000003000000
-    spellPrefab: {fileID: 1344509096363949666, guid: 4c0dec3b4c11ffc478037e7eec194e15, type: 3}
-  - name: Fireball
-    sequence: 02000000010000000300000000000000
-    spellPrefab: {fileID: 55926708485792415, guid: f88a9416a20dd5c42a08f03990b6163b, type: 3}
-  - name: Thunder Spear
-    sequence: 00000000010000000300000002000000
-    spellPrefab: {fileID: 9195636573610686190, guid: fbb6fec88f9bb6a4eb822a8e64fd8323, type: 3}
-  - name: Tsunami
-    sequence: 01000000030000000200000002000000
-    spellPrefab: {fileID: 8262664951297141116, guid: 2095150abe33f844da0e080addc1f4c2, type: 3}
+  upBinding: <Keyboard>/w
+  leftBinding: <Keyboard>/a
+  downBinding: <Keyboard>/s
+  rightBinding: <Keyboard>/d
+  spellSequences: []
   castPoint: {fileID: 0}
-  feedbackTarget: {fileID: 1746579118}
+  feedbackTarget: {fileID: 0}
   inputFeedbackDistance: 0.5
   inputFeedbackSpeed: 15
-  playerRenderer: {fileID: 1746579126}
+  playerRenderer: {fileID: 0}
   errorFlashColor: {r: 1, g: 0, b: 0, a: 1}
   errorFlashDuration: 0.2
 --- !u!1 &1840868437 stripped
