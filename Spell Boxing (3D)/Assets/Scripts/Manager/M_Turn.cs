@@ -64,11 +64,14 @@ public class M_Turn : MonoBehaviour
         if (player1 != null) player1.enabled = false;
         if (player2 != null) player2.enabled = false;
 
-        bool p1HasSpell = player1 != null && player1.HasQueuedSpell;
-        bool p2HasSpell = player2 != null && player2.HasQueuedSpell;
-
-        if (!p1HasSpell && player1Health != null) player1Health.TakeDamage(10);
-        if (!p2HasSpell && player2Health != null) player2Health.TakeDamage(10);
+        if (player1IsAttacker)
+        {
+            if (player1Health != null) player1Health.TakeDamage(10);
+        }
+        else
+        {
+            if (player2Health != null) player2Health.TakeDamage(10);
+        }
 
         ResolveSpells();
     }
