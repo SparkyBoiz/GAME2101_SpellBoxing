@@ -5,8 +5,8 @@ public class M_Turn : MonoBehaviour
     public static M_Turn Instance { get; private set; }
 
     [Header("Player References")]
-    [SerializeField] private P1_Controller player1;
-    [SerializeField] private P2_Controller player2;
+    [SerializeField] private P_Controller player1;
+    [SerializeField] private P_Controller player2;
     [SerializeField] private P_Health player1Health;
     [SerializeField] private P_Health player2Health;
 
@@ -18,7 +18,12 @@ public class M_Turn : MonoBehaviour
     private float currentTurnTimer;
     private bool isPlayer1Turn;
 
+    public float CurrentTurnTimer => currentTurnTimer;
+    public float TurnDuration => turnDuration;
+    public bool IsPlayer1Turn => isPlayer1Turn;
+
     private bool player1IsAttacker = true;
+    public Vector3 SpellTargetPosition { get; private set; }
     public bool Player1IsAttacker => player1IsAttacker;
     public event System.Action<bool> OnAttackerChanged;
     private bool isSecondInput = false;
@@ -44,11 +49,15 @@ public class M_Turn : MonoBehaviour
     {
         if (waitingForResolution) return;
 
+        if (player1 != null && player2 != null)
+        {
+            SpellTargetPosition = (player1.transform.position + player2.transform.position) / 2f;
+        }
+
         currentTurnTimer -= Time.deltaTime;
 
         if (currentTurnTimer <= 0f)
         {
-            Debug.Log("Turn Timer Expired!");
             SwitchTurn();
         }
     }
@@ -83,17 +92,15 @@ public class M_Turn : MonoBehaviour
 
             if (p1HasSpell)
             {
-                Debug.Log("Player 2 timed out! Player 1's spell is discarded.");
                 if (player1 != null) player1.DiscardQueuedSpell();
             }
             else if (p2HasSpell)
             {
-                Debug.Log("Player 1 timed out! Player 2's spell is discarded.");
                 if (player2 != null) player2.DiscardQueuedSpell();
             }
             else
             {
-                Debug.Log("Both players timed out! No damage dealt.");
+                
             }
 
             player1IsAttacker = !player1IsAttacker;
@@ -126,25 +133,35 @@ public class M_Turn : MonoBehaviour
         if (player2 != null) player2.OnSpellCast -= SwitchTurn;
     }
 
-    public void OnSpellCollision(bool sameType)
+    public void OnSpellCollision(bool sameType, SpellType spellType)
     {
         if (collisionProcessed) return;
         collisionProcessed = true;
 
         if (sameType)
         {
-            Debug.Log($"Spells matched! Damage dealt to {(player1IsAttacker ? "Player 2" : "Player 1")}.");
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlaySpellMatchSFX(spellType);
+            }
+
+            Debug.Log($"Spells matched! Damage dealt to {(player1IsAttacker ? "Player 1" : "Player 2")}.");
             if (player1IsAttacker)
             {
-                if (player2Health != null) player2Health.TakeDamage(damageAmount);
+                if (player1Health != null) player1Health.TakeDamage(damageAmount);
             }
             else
             {
-                if (player1Health != null) player1Health.TakeDamage(damageAmount);
+                if (player2Health != null) player2Health.TakeDamage(damageAmount);
             }
         }
         else
         {
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlayFizzleSFX();
+            }
+
             Debug.Log("Spells fizzled! Attacker priority swaps.");
             player1IsAttacker = !player1IsAttacker;
         }

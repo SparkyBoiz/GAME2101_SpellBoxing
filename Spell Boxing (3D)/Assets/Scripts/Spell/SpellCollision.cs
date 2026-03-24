@@ -12,7 +12,6 @@ public class SpellCollision : MonoBehaviour
 {
     [SerializeField] public SpellType spellType;
 
-    [Tooltip("Optional: Particle effect to spawn when the spell is destroyed.")]
     [SerializeField] private GameObject destructionEffect;
 
     private void OnTriggerEnter(Collider other)
@@ -33,7 +32,6 @@ public class SpellCollision : MonoBehaviour
 
             if (sameType)
             {
-                Debug.Log("Spells collided with SAME type! Dealing Damage.");
                 if (destructionEffect != null)
                 {
                     Instantiate(destructionEffect, transform.position, transform.rotation);
@@ -41,12 +39,11 @@ public class SpellCollision : MonoBehaviour
             }
             else
             {
-                Debug.Log("Spells collided with DIFFERENT type! Fizzling out.");
             }
 
             if (M_Turn.Instance != null)
             {
-                M_Turn.Instance.OnSpellCollision(sameType);
+                M_Turn.Instance.OnSpellCollision(sameType, spellType);
             }
 
             Destroy(gameObject);

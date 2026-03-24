@@ -25,13 +25,19 @@ public class P2_Controller : MonoBehaviour
     private GameObject queuedSpell;
     public bool HasQueuedSpell => queuedSpell != null;
 
+    private Animator animator;
     private InputAction castUpAction;
     private InputAction castLeftAction;
     private InputAction castDownAction;
     private InputAction castRightAction;
 
+    private static readonly int IsAttackingHash = Animator.StringToHash("isAttacking");
+    private static readonly int SpellTypeHash = Animator.StringToHash("spellType");
+
     private void Awake()
     {
+        animator = GetComponent<Animator>();
+
         castUpAction = new InputAction(type: InputActionType.Button, binding: "<Keyboard>/upArrow");
         castLeftAction = new InputAction(type: InputActionType.Button, binding: "<Keyboard>/leftArrow");
         castDownAction = new InputAction(type: InputActionType.Button, binding: "<Keyboard>/downArrow");
@@ -68,6 +74,12 @@ public class P2_Controller : MonoBehaviour
         }
 
         queuedSpell = spellPrefab;
+        animator.SetBool(IsAttackingHash, true);
+
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySpellQueuedSFX();
+        }
         OnSpellCast?.Invoke();
     }
 
@@ -78,12 +90,21 @@ public class P2_Controller : MonoBehaviour
         Vector3 spawnPos = castPoint != null ? castPoint.position : transform.position;
         Quaternion spawnRot = castPoint != null ? castPoint.rotation : transform.rotation;
 
+        var spellData = queuedSpell.GetComponent<SpellData>();
+        if (spellData != null)
+        {
+            animator.SetInteger(SpellTypeHash, spellData.SpellAnimationId);
+        }
+
         Instantiate(queuedSpell, spawnPos, spawnRot);
         queuedSpell = null;
+
+        animator.SetBool(IsAttackingHash, false);
     }
 
     public void DiscardQueuedSpell()
     {
         queuedSpell = null;
+        animator.SetBool(IsAttackingHash, false);
     }
 }
