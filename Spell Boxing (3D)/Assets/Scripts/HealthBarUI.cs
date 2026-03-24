@@ -1,22 +1,33 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 public class HealthBarUI : MonoBehaviour
 {
-    [Tooltip("The health component of the player to track.")]
     [SerializeField] private P_Health playerHealth;
 
-    [Header("UI Elements (Use one or both)")]
-    [Tooltip("(Optional) The UI Image component to use as the health bar fill. It should have its Image Type set to 'Filled'.")]
     [SerializeField] private Image healthBarFill;
 
-    [Tooltip("(Optional) The UI Slider component to use as the health bar.")]
     [SerializeField] private Slider healthBarSlider;
+
+    [SerializeField] private float shakeDuration = 0.2f;
+    [SerializeField] private float shakeIntensity = 5f;
+
+    private int previousHealth;
+    private RectTransform rectTransform;
+    private Vector3 originalPosition;
+    private Coroutine shakeCoroutine;
+
+    private void Awake()
+    {
+        rectTransform = GetComponent<RectTransform>();
+    }
 
     private void OnEnable()
     {
         if (playerHealth != null)
         {
+            previousHealth = playerHealth.CurrentHealth;
             playerHealth.OnHealthChanged += UpdateHealthBar;
             UpdateHealthBar(playerHealth.CurrentHealth, playerHealth.MaxHealth);
         }
@@ -32,6 +43,14 @@ public class HealthBarUI : MonoBehaviour
 
     private void UpdateHealthBar(int currentHealth, int maxHealth)
     {
+        bool tookDamage = currentHealth < previousHealth;
+        previousHealth = currentHealth;
+
+        if (tookDamage)
+        {
+            TriggerShake();
+        }
+
         if (healthBarFill != null)
         {
             if (maxHealth <= 0)
@@ -56,5 +75,37 @@ public class HealthBarUI : MonoBehaviour
                 healthBarSlider.value = currentHealth;
             }
         }
+    }
+
+    private void TriggerShake()
+    {
+        if (shakeCoroutine != null)
+        {
+            StopCoroutine(shakeCoroutine);
+            if (rectTransform != null) rectTransform.anchoredPosition = originalPosition;
+        }
+        else
+        {
+            if (rectTransform != null) originalPosition = rectTransform.anchoredPosition;
+        }
+
+        if (gameObject.activeInHierarchy && rectTransform != null)
+        {
+            shakeCoroutine = StartCoroutine(ShakeRoutine());
+        }
+    }
+
+    private IEnumerator ShakeRoutine()
+    {
+        float elapsed = 0f;
+        while (elapsed < shakeDuration)
+        {
+            elapsed += Time.deltaTime;
+            float strength = (1f - (elapsed / shakeDuration)) * shakeIntensity;
+            rectTransform.anchoredPosition = originalPosition + (Vector3)(Random.insideUnitCircle * strength);
+            yield return null;
+        }
+        rectTransform.anchoredPosition = originalPosition;
+        shakeCoroutine = null;
     }
 }

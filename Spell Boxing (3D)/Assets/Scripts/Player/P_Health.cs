@@ -28,7 +28,6 @@ public class P_Health : MonoBehaviour
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
-        Debug.Log($"{gameObject.name} took {damage} damage. Current Health: {currentHealth}");
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
 
         if (animator != null)
@@ -39,7 +38,6 @@ public class P_Health : MonoBehaviour
 
         if (currentHealth <= 0)
         {
-            Debug.Log($"{gameObject.name} has been defeated!");
             if (animator != null)
             {
                 animator.SetBool(IsDeadHash, true);

@@ -21,41 +21,23 @@ public struct SpellSequence
 
 public class P_Controller : MonoBehaviour
 {
-    [Header("Input Bindings")]
-    [Tooltip("Input binding for the Up direction")]
     [SerializeField] private string upBinding = "<Keyboard>/w";
-
-    [Tooltip("Input binding for the Left direction")]
     [SerializeField] private string leftBinding = "<Keyboard>/a";
 
-    [Tooltip("Input binding for the Down direction")]
     [SerializeField] private string downBinding = "<Keyboard>/s";
 
-    [Tooltip("Input binding for the Right direction")]
     [SerializeField] private string rightBinding = "<Keyboard>/d";
 
-    [Header("Spell Sequences")]
-    [Tooltip("Define combinations of directions to cast specific spells.")]
     [SerializeField] private List<SpellSequence> spellSequences = new List<SpellSequence>();
 
-    [Header("Cast Settings")]
-    [Tooltip("Optional: The transform where spells will spawn. If null, uses the player's position.")]
     [SerializeField] private Transform castPoint;
 
-    [Header("Feedback Settings")]
-    [Tooltip("The transform to move for feedback. If null, uses this player's transform.")]
     [SerializeField] private Transform feedbackTarget;
-    [Tooltip("How far the player moves to provide input feedback.")]
     [SerializeField] private float inputFeedbackDistance = 0.5f;
-    [Tooltip("How fast the player moves for input feedback.")]
     [SerializeField] private float inputFeedbackSpeed = 15f;
 
-    [Header("Error Feedback Settings")]
-    [Tooltip("The renderer to flash when an error occurs. If null, tries to find one in children.")]
     [SerializeField] private Renderer playerRenderer;
-    [Tooltip("The color to flash when an incorrect sequence is entered.")]
     [SerializeField] private Color errorFlashColor = Color.red;
-    [Tooltip("How long the error flash lasts.")]
     [SerializeField] private float errorFlashDuration = 0.2f;
 
     public event System.Action OnSpellCast;
@@ -283,10 +265,6 @@ public class P_Controller : MonoBehaviour
         animator.SetBool(IsAttackingHash, false);
     }
 
-    /// <summary>
-    /// This method should be called by an Animation Event at the end of the attack animation.
-    /// It signals that the player is no longer in an attacking state.
-    /// </summary>
     public void OnAttackAnimationFinished()
     {
         animator.SetBool(IsAttackingHash, false);

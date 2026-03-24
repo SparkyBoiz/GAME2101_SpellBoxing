@@ -3,7 +3,6 @@ using UnityEngine.UI;
 
 public class TurnTimerImageUI : MonoBehaviour
 {
-    [Tooltip("The UI Image to use for the timer. Ensure the RectTransform Pivot X is set to 0.5 for center shrinking.")]
     [SerializeField] private Image timerImage;
 
     private Vector3 initialScale;

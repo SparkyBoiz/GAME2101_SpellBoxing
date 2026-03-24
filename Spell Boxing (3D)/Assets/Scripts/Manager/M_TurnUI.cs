@@ -2,16 +2,11 @@ using UnityEngine;
 
 public class M_TurnUI : MonoBehaviour
 {
-    [Header("Icons")]
-    [Tooltip("The UI GameObject (e.g. Image) representing the attacker (Sword).")]
     [SerializeField] private GameObject attackerIcon;
-    [Tooltip("The UI GameObject (e.g. Image) representing the defender (Shield).")]
     [SerializeField] private GameObject defenderIcon;
 
-    [Header("Player Tracking")]
     [SerializeField] private Transform player1;
     [SerializeField] private Transform player2;
-    [Tooltip("Height offset above the player in world units.")]
     [SerializeField] private float heightOffset = 2.0f;
 
     private Camera mainCamera;

@@ -4,29 +4,23 @@ public class M_Turn : MonoBehaviour
 {
     public static M_Turn Instance { get; private set; }
 
-    [Header("Player References")]
     [SerializeField] private P_Controller player1;
     [SerializeField] private P_Controller player2;
     [SerializeField] private P_Health player1Health;
     [SerializeField] private P_Health player2Health;
 
-    [Header("Turn Settings")]
-    [Tooltip("Time in seconds for each player's turn.")]
     [SerializeField] private float turnDuration = 5f;
     [SerializeField] private int damageAmount = 20;
 
     private float currentTurnTimer;
-    private bool isPlayer1Turn;
 
     public float CurrentTurnTimer => currentTurnTimer;
     public float TurnDuration => turnDuration;
-    public bool IsPlayer1Turn => isPlayer1Turn;
 
     private bool player1IsAttacker = true;
     public Vector3 SpellTargetPosition { get; private set; }
     public bool Player1IsAttacker => player1IsAttacker;
     public event System.Action<bool> OnAttackerChanged;
-    private bool isSecondInput = false;
     private bool waitingForResolution = false;
     private bool collisionProcessed = false;
 
@@ -41,8 +35,8 @@ public class M_Turn : MonoBehaviour
         player1IsAttacker = true;
         StartRound();
 
-        if (player1 != null) player1.OnSpellCast += SwitchTurn;
-        if (player2 != null) player2.OnSpellCast += SwitchTurn;
+        if (player1 != null) player1.OnSpellCast += CheckBothSpellsCast;
+        if (player2 != null) player2.OnSpellCast += CheckBothSpellsCast;
     }
 
     private void Update()
@@ -58,79 +52,84 @@ public class M_Turn : MonoBehaviour
 
         if (currentTurnTimer <= 0f)
         {
-            SwitchTurn();
+            HandleTimeOut();
         }
     }
 
-    private void SwitchTurn()
+    private void HandleTimeOut()
     {
         if (waitingForResolution) return;
 
-        if (!isSecondInput)
-        {
-            isSecondInput = true;
-            isPlayer1Turn = !isPlayer1Turn;
-            currentTurnTimer = turnDuration;
-            UpdatePlayerControl();
-        }
-        else
+        waitingForResolution = true;
+        if (player1 != null) player1.enabled = false;
+        if (player2 != null) player2.enabled = false;
+
+        bool p1HasSpell = player1 != null && player1.HasQueuedSpell;
+        bool p2HasSpell = player2 != null && player2.HasQueuedSpell;
+
+        if (!p1HasSpell && player1Health != null) player1Health.TakeDamage(10);
+        if (!p2HasSpell && player2Health != null) player2Health.TakeDamage(10);
+
+        ResolveSpells();
+    }
+
+    private void CheckBothSpellsCast()
+    {
+        if (waitingForResolution) return;
+
+        bool p1HasSpell = player1 != null && player1.HasQueuedSpell;
+        bool p2HasSpell = player2 != null && player2.HasQueuedSpell;
+
+        if (p1HasSpell && p2HasSpell)
         {
             waitingForResolution = true;
             if (player1 != null) player1.enabled = false;
             if (player2 != null) player2.enabled = false;
-
-            bool p1HasSpell = player1 != null && player1.HasQueuedSpell;
-            bool p2HasSpell = player2 != null && player2.HasQueuedSpell;
-
-            if (p1HasSpell && p2HasSpell)
-            {
-                collisionProcessed = false;
-                if (player1 != null) player1.ExecuteQueuedSpell();
-                if (player2 != null) player2.ExecuteQueuedSpell();
-                return;
-            }
-
-            if (p1HasSpell)
-            {
-                if (player1 != null) player1.DiscardQueuedSpell();
-            }
-            else if (p2HasSpell)
-            {
-                if (player2 != null) player2.DiscardQueuedSpell();
-            }
-            else
-            {
-                
-            }
-
-            player1IsAttacker = !player1IsAttacker;
-            StartRound();
+            ResolveSpells();
         }
+    }
+
+    private void ResolveSpells()
+    {
+        bool p1HasSpell = player1 != null && player1.HasQueuedSpell;
+        bool p2HasSpell = player2 != null && player2.HasQueuedSpell;
+
+        if (p1HasSpell && p2HasSpell)
+        {
+            collisionProcessed = false;
+            if (player1 != null) player1.ExecuteQueuedSpell();
+            if (player2 != null) player2.ExecuteQueuedSpell();
+            return;
+        }
+
+        if (p1HasSpell)
+        {
+            if (player1 != null) player1.DiscardQueuedSpell();
+        }
+        else if (p2HasSpell)
+        {
+            if (player2 != null) player2.DiscardQueuedSpell();
+        }
+
+        player1IsAttacker = !player1IsAttacker;
+        StartRound();
     }
 
     private void StartRound()
     {
         waitingForResolution = false;
-        isSecondInput = false;
-        
-        isPlayer1Turn = player1IsAttacker;
         
         currentTurnTimer = turnDuration;
-        UpdatePlayerControl();
-        Debug.Log($"New Round! Attacker: {(player1IsAttacker ? "Player 1" : "Player 2")}");
+        if (player1 != null) player1.enabled = true;
+        if (player2 != null) player2.enabled = true;
+        
         OnAttackerChanged?.Invoke(player1IsAttacker);
-    }
-
-    private void UpdatePlayerControl()
-    {
-        if (player1 != null) player1.enabled = isPlayer1Turn;
-        if (player2 != null) player2.enabled = !isPlayer1Turn;
     }
 
     private void OnDestroy()
     {
-        if (player1 != null) player1.OnSpellCast -= SwitchTurn;
-        if (player2 != null) player2.OnSpellCast -= SwitchTurn;
+        if (player1 != null) player1.OnSpellCast -= CheckBothSpellsCast;
+        if (player2 != null) player2.OnSpellCast -= CheckBothSpellsCast;
     }
 
     public void OnSpellCollision(bool sameType, SpellType spellType)
@@ -145,7 +144,6 @@ public class M_Turn : MonoBehaviour
                 AudioManager.Instance.PlaySpellMatchSFX(spellType);
             }
 
-            Debug.Log($"Spells matched! Damage dealt to {(player1IsAttacker ? "Player 1" : "Player 2")}.");
             if (player1IsAttacker)
             {
                 if (player1Health != null) player1Health.TakeDamage(damageAmount);
@@ -162,7 +160,6 @@ public class M_Turn : MonoBehaviour
                 AudioManager.Instance.PlayFizzleSFX();
             }
 
-            Debug.Log("Spells fizzled! Attacker priority swaps.");
             player1IsAttacker = !player1IsAttacker;
         }
 

@@ -3,7 +3,6 @@ using TMPro;
 
 public class TurnTimerUI : MonoBehaviour
 {
-    [Tooltip("The TextMeshProUGUI component to display the timer.")]
     [SerializeField] private TextMeshProUGUI timerText;
 
     private void Update()
