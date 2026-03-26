@@ -16,6 +16,11 @@ public class M_Turn : MonoBehaviour
 
     public float CurrentTurnTimer => currentTurnTimer;
     public float TurnDuration => turnDuration;
+    public SpellDamageMultiplier DamageMultiplierCalc => damageMultiplierCalc;
+
+    [SerializeField] private SpellDamageMultiplier damageMultiplierCalc;
+    private float p1DamageMultiplier = 1f;
+    private float p2DamageMultiplier = 1f;
 
     private bool player1IsAttacker = true;
     public Vector3 SpellTargetPosition { get; private set; }
@@ -37,6 +42,21 @@ public class M_Turn : MonoBehaviour
 
         if (player1 != null) player1.OnSpellCast += CheckBothSpellsCast;
         if (player2 != null) player2.OnSpellCast += CheckBothSpellsCast;
+
+        if (player1 != null) player1.OnSpellCast += CalculateP1Multiplier;
+        if (player2 != null) player2.OnSpellCast += CalculateP2Multiplier;
+    }
+
+    private void CalculateP1Multiplier()
+    {
+        if (damageMultiplierCalc != null)
+            p1DamageMultiplier = damageMultiplierCalc.GetMultiplier(currentTurnTimer, turnDuration);
+    }
+
+    private void CalculateP2Multiplier()
+    {
+        if (damageMultiplierCalc != null)
+            p2DamageMultiplier = damageMultiplierCalc.GetMultiplier(currentTurnTimer, turnDuration);
     }
 
     private void Update()
@@ -126,6 +146,9 @@ public class M_Turn : MonoBehaviour
         if (player1 != null) player1.enabled = true;
         if (player2 != null) player2.enabled = true;
         
+        p1DamageMultiplier = 1f;
+        p2DamageMultiplier = 1f;
+
         OnAttackerChanged?.Invoke(player1IsAttacker);
     }
 
@@ -133,6 +156,9 @@ public class M_Turn : MonoBehaviour
     {
         if (player1 != null) player1.OnSpellCast -= CheckBothSpellsCast;
         if (player2 != null) player2.OnSpellCast -= CheckBothSpellsCast;
+
+        if (player1 != null) player1.OnSpellCast -= CalculateP1Multiplier;
+        if (player2 != null) player2.OnSpellCast -= CalculateP2Multiplier;
     }
 
     public void OnSpellCollision(bool sameType, SpellType spellType)
@@ -149,11 +175,15 @@ public class M_Turn : MonoBehaviour
 
             if (player1IsAttacker)
             {
-                if (player1Health != null) player1Health.TakeDamage(damageAmount);
+                // Player 2 successfully defended; apply Player 2's casting speed multiplier to the counterattack damage
+                int finalDamage = damageMultiplierCalc != null ? Mathf.RoundToInt(damageAmount * p2DamageMultiplier) : damageAmount;
+                if (player1Health != null) player1Health.TakeDamage(finalDamage);
             }
             else
             {
-                if (player2Health != null) player2Health.TakeDamage(damageAmount);
+                // Player 1 successfully defended; apply Player 1's casting speed multiplier to the counterattack damage
+                int finalDamage = damageMultiplierCalc != null ? Mathf.RoundToInt(damageAmount * p1DamageMultiplier) : damageAmount;
+                if (player2Health != null) player2Health.TakeDamage(finalDamage);
             }
         }
         else
