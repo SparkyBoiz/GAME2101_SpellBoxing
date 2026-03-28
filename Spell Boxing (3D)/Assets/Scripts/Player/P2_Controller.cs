@@ -23,6 +23,7 @@ public class P2_Controller : MonoBehaviour
     public event System.Action OnSpellCast;
 
     private GameObject queuedSpell;
+    public GameObject QueuedSpell => queuedSpell;
     public bool HasQueuedSpell => queuedSpell != null;
 
     private Animator animator;

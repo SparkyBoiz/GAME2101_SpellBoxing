@@ -10,7 +10,7 @@ public class M_Turn : MonoBehaviour
     [SerializeField] private P_Health player2Health;
 
     [SerializeField] private float turnDuration = 5f;
-    [SerializeField] private int damageAmount = 20;
+    [SerializeField] private int healAmount = 20;
 
     private float currentTurnTimer;
 
@@ -28,6 +28,11 @@ public class M_Turn : MonoBehaviour
     public event System.Action<bool> OnAttackerChanged;
     private bool waitingForResolution = false;
     private bool collisionProcessed = false;
+
+    private SpellType p1QueuedSpell;
+    private SpellType p2QueuedSpell;
+    private int p1QueuedDamage;
+    private int p2QueuedDamage;
 
     private void Awake()
     {
@@ -84,13 +89,16 @@ public class M_Turn : MonoBehaviour
         if (player1 != null) player1.enabled = false;
         if (player2 != null) player2.enabled = false;
 
-        if (player1IsAttacker)
+        bool p1HasSpell = player1 != null && player1.HasQueuedSpell;
+        bool p2HasSpell = player2 != null && player2.HasQueuedSpell;
+
+        if (!p1HasSpell && player1Health != null)
         {
-            if (player1Health != null) player1Health.TakeDamage(10);
+            player1Health.TakeDamage(10);
         }
-        else
+        if (!p2HasSpell && player2Health != null)
         {
-            if (player2Health != null) player2Health.TakeDamage(10);
+            player2Health.TakeDamage(10);
         }
 
         ResolveSpells();
@@ -119,6 +127,19 @@ public class M_Turn : MonoBehaviour
 
         if (p1HasSpell && p2HasSpell)
         {
+            var p1Collision = player1.QueuedSpell.GetComponent<SpellCollision>();
+            var p2Collision = player2.QueuedSpell.GetComponent<SpellCollision>();
+            if (p1Collision != null)
+            {
+                p1QueuedSpell = p1Collision.spellType;
+                p1QueuedDamage = p1Collision.spellDamage;
+            }
+            if (p2Collision != null)
+            {
+                p2QueuedSpell = p2Collision.spellType;
+                p2QueuedDamage = p2Collision.spellDamage;
+            }
+
             collisionProcessed = false;
             if (player1 != null) player1.ExecuteQueuedSpell();
             if (player2 != null) player2.ExecuteQueuedSpell();
@@ -161,41 +182,63 @@ public class M_Turn : MonoBehaviour
         if (player2 != null) player2.OnSpellCast -= CalculateP2Multiplier;
     }
 
-    public void OnSpellCollision(bool sameType, SpellType spellType)
+    public void OnSpellCollision()
     {
         if (collisionProcessed) return;
         collisionProcessed = true;
+
+        bool sameType = p1QueuedSpell == p2QueuedSpell;
 
         if (sameType)
         {
             if (AudioManager.Instance != null)
             {
-                AudioManager.Instance.PlaySpellMatchSFX(spellType);
+                AudioManager.Instance.PlaySpellMatchSFX(p1QueuedSpell);
             }
 
+            // If spells are the same type, the attacker's spell hits the defender.
             if (player1IsAttacker)
             {
-                // Player 2 successfully defended; apply Player 2's casting speed multiplier to the counterattack damage
-                int finalDamage = damageMultiplierCalc != null ? Mathf.RoundToInt(damageAmount * p2DamageMultiplier) : damageAmount;
-                if (player1Health != null) player1Health.TakeDamage(finalDamage);
+                Debug.Log($"[M_Turn] P1 is the attacker! Dealing {p1QueuedDamage} base damage to player2Health.");
+                int finalDamage = damageMultiplierCalc != null ? Mathf.RoundToInt(p1QueuedDamage * p1DamageMultiplier) : p1QueuedDamage;
+                if (player2Health != null) player2Health.TakeDamage(finalDamage);
             }
             else
             {
-                // Player 1 successfully defended; apply Player 1's casting speed multiplier to the counterattack damage
-                int finalDamage = damageMultiplierCalc != null ? Mathf.RoundToInt(damageAmount * p1DamageMultiplier) : damageAmount;
-                if (player2Health != null) player2Health.TakeDamage(finalDamage);
+                Debug.Log($"[M_Turn] P2 is the attacker! Dealing {p2QueuedDamage} base damage to player1Health.");
+                int finalDamage = damageMultiplierCalc != null ? Mathf.RoundToInt(p2QueuedDamage * p2DamageMultiplier) : p2QueuedDamage;
+                if (player1Health != null) player1Health.TakeDamage(finalDamage);
             }
         }
         else
         {
-            if (AudioManager.Instance != null)
+            bool p1CountersP2 = Counters(p1QueuedSpell, p2QueuedSpell);
+            bool p2CountersP1 = Counters(p2QueuedSpell, p1QueuedSpell);
+
+            if (p1CountersP2)
             {
-                AudioManager.Instance.PlayFizzleSFX();
+                if (player1Health != null) player1Health.Heal(healAmount);
+            }
+            else if (p2CountersP1)
+            {
+                if (player2Health != null) player2Health.Heal(healAmount);
+            }
+            else
+            {
+                if (AudioManager.Instance != null) AudioManager.Instance.PlayFizzleSFX();
             }
 
             player1IsAttacker = !player1IsAttacker;
         }
 
         StartRound();
+    }
+
+    private bool Counters(SpellType attacker, SpellType defender)
+    {
+        return (attacker == SpellType.Water && defender == SpellType.Fire) ||
+               (attacker == SpellType.Fire && defender == SpellType.Earth) ||
+               (attacker == SpellType.Earth && defender == SpellType.Lightning) ||
+               (attacker == SpellType.Lightning && defender == SpellType.Water);
     }
 }

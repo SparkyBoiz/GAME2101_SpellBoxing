@@ -1735,10 +1735,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: caa077df7add12845a944dc85ba4d8e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::M_TurnUI
-  attackerIcon: {fileID: 1840868437}
-  defenderIcon: {fileID: 894860828}
-  player1: {fileID: 1746579118}
-  player2: {fileID: 1356978263}
+  attackerIcon: {fileID: 894860828}
+  defenderIcon: {fileID: 1840868437}
+  player1: {fileID: 1356978263}
+  player2: {fileID: 1746579118}
   heightOffset: 3.5
 --- !u!4 &704551992
 Transform:
@@ -2143,10 +2143,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::M_Turn
   player1: {fileID: 1356978265}
   player2: {fileID: 1746579127}
-  player1Health: {fileID: 1356978264}
-  player2Health: {fileID: 1746579119}
-  turnDuration: 5
-  damageAmount: 20
+  player1Health: {fileID: 1746579119}
+  player2Health: {fileID: 1356978264}
+  turnDuration: 60
+  healAmount: 20
   damageMultiplierCalc: {fileID: 894995231}
 --- !u!4 &894995230
 Transform:

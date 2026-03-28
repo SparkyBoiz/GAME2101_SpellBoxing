@@ -27,6 +27,8 @@ public class P_Health : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
+        Debug.Log($"[P_Health] The GameObject '{gameObject.name}' just took {damage} damage!");
+        
         currentHealth -= damage;
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
 
@@ -52,6 +54,16 @@ public class P_Health : MonoBehaviour
             if (playerController != null) playerController.enabled = false;
             
             SceneManager.LoadScene("Scene_MainMenu");
+        }
+    }
+
+    public void Heal(int amount)
+    {
+        if (currentHealth > 0) // Only heal if they aren't dead
+        {
+            currentHealth += amount;
+            if (currentHealth > maxHealth) currentHealth = maxHealth;
+            OnHealthChanged?.Invoke(currentHealth, maxHealth);
         }
     }
 

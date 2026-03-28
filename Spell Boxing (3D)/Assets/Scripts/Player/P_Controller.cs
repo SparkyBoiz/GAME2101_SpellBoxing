@@ -43,6 +43,7 @@ public class P_Controller : MonoBehaviour
     public event System.Action OnSpellCast;
 
     private GameObject queuedSpell;
+    public GameObject QueuedSpell => queuedSpell;
     public bool HasQueuedSpell => queuedSpell != null;
     private List<InputDirection> currentInputSequence = new List<InputDirection>();
 

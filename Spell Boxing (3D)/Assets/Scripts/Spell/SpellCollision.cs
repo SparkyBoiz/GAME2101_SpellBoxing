@@ -12,6 +12,8 @@ public class SpellCollision : MonoBehaviour
 {
     [SerializeField] public SpellType spellType;
 
+    [SerializeField] public int spellDamage = 20;
+
     [SerializeField] private GameObject destructionEffect;
 
     private void OnTriggerEnter(Collider other)
@@ -28,22 +30,14 @@ public class SpellCollision : MonoBehaviour
     {
         if (other.TryGetComponent<SpellCollision>(out SpellCollision otherSpell))
         {
-            bool sameType = spellType == otherSpell.spellType;
-
-            if (sameType)
+            if (destructionEffect != null)
             {
-                if (destructionEffect != null)
-                {
-                    Instantiate(destructionEffect, transform.position, transform.rotation);
-                }
-            }
-            else
-            {
+                Instantiate(destructionEffect, transform.position, transform.rotation);
             }
 
             if (M_Turn.Instance != null)
             {
-                M_Turn.Instance.OnSpellCollision(sameType, spellType);
+                M_Turn.Instance.OnSpellCollision();
             }
 
             Destroy(gameObject);
