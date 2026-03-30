@@ -98,7 +98,7 @@ public class M_Turn : MonoBehaviour
         }
         if (!p2HasSpell && player2Health != null)
         {
-            player2Health.TakeDamage(10);
+            player2Health.TakeDamage(15);
         }
 
         ResolveSpells();
