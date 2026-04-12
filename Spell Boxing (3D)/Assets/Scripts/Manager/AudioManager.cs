@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class AudioManager : MonoBehaviour
 {
@@ -23,6 +24,9 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip earthMatchClip;
     [SerializeField] private AudioClip lightningMatchClip;
 
+    [Header("UI SFX")]
+    [SerializeField] private AudioClip buttonHoverClip;
+    [SerializeField] private AudioClip buttonClickClip;
 
     private void Awake()
     {
@@ -119,6 +123,13 @@ public class AudioManager : MonoBehaviour
         if (clipToPlay != null)
         {
             sfxSource.PlayOneShot(clipToPlay);
+        }
+    }
+    public void PlayButtonClickSFX()
+    {
+        if (buttonClickClip != null)
+        {
+            sfxSource.PlayOneShot(buttonClickClip);
         }
     }
 }
