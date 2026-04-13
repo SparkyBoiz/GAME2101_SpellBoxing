@@ -2893,7 +2893,9 @@ MonoBehaviour:
   player2: {fileID: 1746579127}
   player1Health: {fileID: 1746579119}
   player2Health: {fileID: 1356978264}
-  turnDuration: 60
+  turnDuration: 8
+  turnDurationDecay: 0.2
+  minimumTurnDuration: 1.5
   healAmount: 5
   damageMultiplierCalc: {fileID: 894995231}
 --- !u!4 &894995230
