@@ -10,12 +10,16 @@ public class M_Turn : MonoBehaviour
     [SerializeField] private P_Health player2Health;
 
     [SerializeField] private float turnDuration = 5f;
+    [SerializeField] private float turnDurationDecay = 0.2f;
+    [SerializeField] private float minimumTurnDuration = 1.5f;
     [SerializeField] private int healAmount = 20;
 
     private float currentTurnTimer;
+    private float currentMaxTurnDuration;
+    private bool isFirstRound = true;
 
     public float CurrentTurnTimer => currentTurnTimer;
-    public float TurnDuration => turnDuration;
+    public float TurnDuration => currentMaxTurnDuration;
     public SpellDamageMultiplier DamageMultiplierCalc => damageMultiplierCalc;
 
     [SerializeField] private SpellDamageMultiplier damageMultiplierCalc;
@@ -42,6 +46,7 @@ public class M_Turn : MonoBehaviour
 
     private void Start()
     {
+        currentMaxTurnDuration = turnDuration;
         player1IsAttacker = true;
         StartRound();
 
@@ -55,13 +60,13 @@ public class M_Turn : MonoBehaviour
     private void CalculateP1Multiplier()
     {
         if (damageMultiplierCalc != null)
-            p1DamageMultiplier = damageMultiplierCalc.GetMultiplier(currentTurnTimer, turnDuration);
+            p1DamageMultiplier = damageMultiplierCalc.GetMultiplier(currentTurnTimer, currentMaxTurnDuration);
     }
 
     private void CalculateP2Multiplier()
     {
         if (damageMultiplierCalc != null)
-            p2DamageMultiplier = damageMultiplierCalc.GetMultiplier(currentTurnTimer, turnDuration);
+            p2DamageMultiplier = damageMultiplierCalc.GetMultiplier(currentTurnTimer, currentMaxTurnDuration);
     }
 
     private void Update()
@@ -163,7 +168,13 @@ public class M_Turn : MonoBehaviour
     {
         waitingForResolution = false;
         
-        currentTurnTimer = turnDuration;
+        if (!isFirstRound)
+        {
+            currentMaxTurnDuration = Mathf.Max(minimumTurnDuration, currentMaxTurnDuration - turnDurationDecay);
+        }
+        isFirstRound = false;
+
+        currentTurnTimer = currentMaxTurnDuration;
         if (player1 != null) player1.enabled = true;
         if (player2 != null) player2.enabled = true;
         
