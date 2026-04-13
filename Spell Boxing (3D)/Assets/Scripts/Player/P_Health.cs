@@ -27,7 +27,6 @@ public class P_Health : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        Debug.Log($"[P_Health] The GameObject '{gameObject.name}' just took {damage} damage!");
         
         currentHealth -= damage;
         OnHealthChanged?.Invoke(currentHealth, maxHealth);

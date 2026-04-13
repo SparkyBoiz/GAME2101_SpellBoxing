@@ -17,6 +17,7 @@ public class M_Turn : MonoBehaviour
 
     [Header("Spell Randomization")]
     [SerializeField] private List<SpellSequence> masterSpellSequences;
+    private List<SpellSequence> activeSpellSequences = new List<SpellSequence>();
 
     private float currentTurnTimer;
     private float currentMaxTurnDuration;
@@ -50,6 +51,7 @@ public class M_Turn : MonoBehaviour
 
     private void Start()
     {
+        ResetSpellPool();
         currentMaxTurnDuration = turnDuration;
         player1IsAttacker = true;
         StartRound();
@@ -101,13 +103,22 @@ public class M_Turn : MonoBehaviour
         bool p1HasSpell = player1 != null && player1.HasQueuedSpell;
         bool p2HasSpell = player2 != null && player2.HasQueuedSpell;
 
+        bool damageDealt = false;
+
         if (!p1HasSpell && player1Health != null)
         {
             player1Health.TakeDamage(10);
+            damageDealt = true;
         }
         if (!p2HasSpell && player2Health != null)
         {
             player2Health.TakeDamage(15);
+            damageDealt = true;
+        }
+
+        if (damageDealt)
+        {
+            ResetSpellPool();
         }
 
         ResolveSpells();
@@ -191,10 +202,9 @@ public class M_Turn : MonoBehaviour
 
     private void RandomizeAndDistributeSpellSequences()
     {
-        // Randomize the master list
-        for (int i = 0; i < masterSpellSequences.Count; i++)
+        for (int i = 0; i < activeSpellSequences.Count; i++)
         {
-            SpellSequence seq = masterSpellSequences[i];
+            SpellSequence seq = activeSpellSequences[i];
             int length = (seq.sequence != null && seq.sequence.Count > 0) ? seq.sequence.Count : 3;
 
             var newSequence = new List<InputDirection>();
@@ -204,14 +214,33 @@ public class M_Turn : MonoBehaviour
                 newSequence.Add(randomDir);
             }
             seq.sequence = newSequence;
-            masterSpellSequences[i] = seq;
+            activeSpellSequences[i] = seq;
         }
 
         // Distribute to players
         if (player1 != null)
-            player1.SetSpellSequences(masterSpellSequences);
+            player1.SetSpellSequences(activeSpellSequences);
         if (player2 != null)
-            player2.SetSpellSequences(masterSpellSequences);
+            player2.SetSpellSequences(activeSpellSequences);
+    }
+
+    private void ResetSpellPool()
+    {
+        activeSpellSequences.Clear();
+        activeSpellSequences.AddRange(masterSpellSequences);
+    }
+
+    private void RemoveSpellFromPool(SpellType typeToRemove)
+    {
+        for (int i = 0; i < activeSpellSequences.Count; i++)
+        {
+            var spellCol = activeSpellSequences[i].spellPrefab.GetComponent<SpellCollision>();
+            if (spellCol != null && spellCol.spellType == typeToRemove)
+            {
+                activeSpellSequences.RemoveAt(i);
+                break;
+            }
+        }
     }
 
     private void OnDestroy()
@@ -237,19 +266,18 @@ public class M_Turn : MonoBehaviour
                 AudioManager.Instance.PlaySpellMatchSFX(p1QueuedSpell);
             }
 
-            // If spells are the same type, the attacker's spell hits the defender.
             if (player1IsAttacker)
             {
-                Debug.Log($"[M_Turn] P1 is the attacker! Dealing {p1QueuedDamage} base damage to player2Health.");
                 int finalDamage = damageMultiplierCalc != null ? Mathf.RoundToInt(p1QueuedDamage * p1DamageMultiplier) : p1QueuedDamage;
                 if (player2Health != null) player2Health.TakeDamage(finalDamage);
             }
             else
             {
-                Debug.Log($"[M_Turn] P2 is the attacker! Dealing {p2QueuedDamage} base damage to player1Health.");
                 int finalDamage = damageMultiplierCalc != null ? Mathf.RoundToInt(p2QueuedDamage * p2DamageMultiplier) : p2QueuedDamage;
                 if (player1Health != null) player1Health.TakeDamage(finalDamage);
             }
+
+            ResetSpellPool();
         }
         else
         {
@@ -267,6 +295,13 @@ public class M_Turn : MonoBehaviour
             else
             {
                 if (AudioManager.Instance != null) AudioManager.Instance.PlayFizzleSFX();
+            }
+
+            // Remove attacker's spell if there's more than one left
+            if (activeSpellSequences.Count > 1)
+            {
+                SpellType attackerSpell = player1IsAttacker ? p1QueuedSpell : p2QueuedSpell;
+                RemoveSpellFromPool(attackerSpell);
             }
 
             player1IsAttacker = !player1IsAttacker;

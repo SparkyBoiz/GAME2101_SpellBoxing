@@ -276,7 +276,6 @@ public class P_Controller : MonoBehaviour
         if (spellData != null)
         {
             animator.SetFloat(SpellTypeHash, spellData.SpellAnimationId);
-            Debug.Log($"[P_Controller] Triggering attack animation for spellType (Blend Tree threshold): {spellData.SpellAnimationId}");
         }
 
         animator.SetTrigger(IsAttackingHash);
