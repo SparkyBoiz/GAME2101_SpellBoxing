@@ -30,6 +30,8 @@ public class P_Controller : MonoBehaviour
 
     [SerializeField] private List<SpellSequence> spellSequences = new List<SpellSequence>();
 
+    public IReadOnlyList<SpellSequence> SpellSequences => spellSequences;
+
     [SerializeField] private Transform castPoint;
 
     [SerializeField] private Transform feedbackTarget;
@@ -41,6 +43,7 @@ public class P_Controller : MonoBehaviour
     [SerializeField] private float errorFlashDuration = 0.2f;
 
     public event System.Action OnSpellCast;
+    public event System.Action OnSpellSequencesUpdated;
 
     private GameObject queuedSpell;
     public GameObject QueuedSpell => queuedSpell;
@@ -92,6 +95,7 @@ public class P_Controller : MonoBehaviour
         {
             originalColor = playerRenderer.material.color;
         }
+        // Spell sequences are now set by M_Turn at the start of each round.
     }
 
     private void OnEnable()
@@ -109,6 +113,18 @@ public class P_Controller : MonoBehaviour
         castDownAction.Disable();
         castRightAction.Disable();
         currentInputSequence.Clear();
+    }
+
+    private void OnDestroy()
+    {
+        // The OnAttackerChanged subscription is no longer needed here.
+    }
+
+    public void SetSpellSequences(IReadOnlyList<SpellSequence> newSequences)
+    {
+        spellSequences.Clear();
+        spellSequences.AddRange(newSequences);
+        OnSpellSequencesUpdated?.Invoke();
     }
 
     private void OnInputDirection(InputDirection dir)

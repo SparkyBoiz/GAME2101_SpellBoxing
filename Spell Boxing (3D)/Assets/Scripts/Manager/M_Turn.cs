@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class M_Turn : MonoBehaviour
 {
@@ -13,6 +14,9 @@ public class M_Turn : MonoBehaviour
     [SerializeField] private float turnDurationDecay = 0.2f;
     [SerializeField] private float minimumTurnDuration = 1.5f;
     [SerializeField] private int healAmount = 20;
+
+    [Header("Spell Randomization")]
+    [SerializeField] private List<SpellSequence> masterSpellSequences;
 
     private float currentTurnTimer;
     private float currentMaxTurnDuration;
@@ -181,7 +185,33 @@ public class M_Turn : MonoBehaviour
         p1DamageMultiplier = 1f;
         p2DamageMultiplier = 1f;
 
+        RandomizeAndDistributeSpellSequences();
         OnAttackerChanged?.Invoke(player1IsAttacker);
+    }
+
+    private void RandomizeAndDistributeSpellSequences()
+    {
+        // Randomize the master list
+        for (int i = 0; i < masterSpellSequences.Count; i++)
+        {
+            SpellSequence seq = masterSpellSequences[i];
+            int length = (seq.sequence != null && seq.sequence.Count > 0) ? seq.sequence.Count : 3;
+
+            var newSequence = new List<InputDirection>();
+            for (int j = 0; j < length; j++)
+            {
+                InputDirection randomDir = (InputDirection)Random.Range(0, 4);
+                newSequence.Add(randomDir);
+            }
+            seq.sequence = newSequence;
+            masterSpellSequences[i] = seq;
+        }
+
+        // Distribute to players
+        if (player1 != null)
+            player1.SetSpellSequences(masterSpellSequences);
+        if (player2 != null)
+            player2.SetSpellSequences(masterSpellSequences);
     }
 
     private void OnDestroy()
