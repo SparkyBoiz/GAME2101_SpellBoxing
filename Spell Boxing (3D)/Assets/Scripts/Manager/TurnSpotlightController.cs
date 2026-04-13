@@ -6,16 +6,33 @@ public class TurnSpotlightController : MonoBehaviour
 
     [SerializeField] private Light player2Light;
 
-    private void Update()
+    private void OnEnable()
+    {
+        if (M_Turn.Instance != null)
+        {
+            M_Turn.Instance.OnAttackerChanged += HandleAttackerChanged;
+            // Set initial state
+            HandleAttackerChanged(M_Turn.Instance.Player1IsAttacker);
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (M_Turn.Instance != null)
+        {
+            M_Turn.Instance.OnAttackerChanged -= HandleAttackerChanged;
+        }
+    }
+
+    private void HandleAttackerChanged(bool isPlayer1Attacker)
     {
         if (player1Light != null)
         {
-            player1Light.enabled = true;
+            player1Light.enabled = isPlayer1Attacker;
         }
-
         if (player2Light != null)
         {
-            player2Light.enabled = true;
+            player2Light.enabled = !isPlayer1Attacker;
         }
     }
 }

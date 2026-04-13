@@ -54,6 +54,7 @@ public class P_Controller : MonoBehaviour
     private InputAction castRightAction;
 
     private static readonly int IsAttackingHash = Animator.StringToHash("isAttacking");
+    private static readonly int SpellTypeHash = Animator.StringToHash("spellType");
 
     private Vector3 initialPosition;
     private Coroutine feedbackCoroutine;
@@ -255,7 +256,14 @@ public class P_Controller : MonoBehaviour
         Vector3 spawnPos = castPoint != null ? castPoint.position : transform.position;
         Quaternion spawnRot = castPoint != null ? castPoint.rotation : transform.rotation;
 
-        animator.SetBool(IsAttackingHash, true);
+        var spellData = queuedSpell.GetComponent<SpellData>();
+        if (spellData != null)
+        {
+            animator.SetFloat(SpellTypeHash, spellData.SpellAnimationId);
+            Debug.Log($"[P_Controller] Triggering attack animation for spellType (Blend Tree threshold): {spellData.SpellAnimationId}");
+        }
+
+        animator.SetTrigger(IsAttackingHash);
         Instantiate(queuedSpell, spawnPos, spawnRot);
         queuedSpell = null;
     }
@@ -263,11 +271,6 @@ public class P_Controller : MonoBehaviour
     public void DiscardQueuedSpell()
     {
         queuedSpell = null;
-        animator.SetBool(IsAttackingHash, false);
-    }
-
-    public void OnAttackAnimationFinished()
-    {
-        animator.SetBool(IsAttackingHash, false);
+        animator.ResetTrigger(IsAttackingHash);
     }
 }

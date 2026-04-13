@@ -2893,7 +2893,7 @@ MonoBehaviour:
   player2: {fileID: 1746579127}
   player1Health: {fileID: 1746579119}
   player2Health: {fileID: 1356978264}
-  turnDuration: 10
+  turnDuration: 60
   healAmount: 5
   damageMultiplierCalc: {fileID: 894995231}
 --- !u!4 &894995230
@@ -5858,7 +5858,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.8501063}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 0, y: 1.0000305}
   m_SizeDelta: {x: 100, y: -62}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1958914398

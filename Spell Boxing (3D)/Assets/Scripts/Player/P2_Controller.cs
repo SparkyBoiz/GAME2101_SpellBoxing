@@ -75,7 +75,6 @@ public class P2_Controller : MonoBehaviour
         }
 
         queuedSpell = spellPrefab;
-        animator.SetBool(IsAttackingHash, true);
 
         if (AudioManager.Instance != null)
         {
@@ -94,18 +93,18 @@ public class P2_Controller : MonoBehaviour
         var spellData = queuedSpell.GetComponent<SpellData>();
         if (spellData != null)
         {
-            animator.SetInteger(SpellTypeHash, spellData.SpellAnimationId);
+            animator.SetFloat(SpellTypeHash, spellData.SpellAnimationId);
+            Debug.Log($"[P2_Controller] Triggering attack animation for spellType (Blend Tree threshold): {spellData.SpellAnimationId}");
         }
 
+        animator.SetTrigger(IsAttackingHash);
         Instantiate(queuedSpell, spawnPos, spawnRot);
         queuedSpell = null;
-
-        animator.SetBool(IsAttackingHash, false);
     }
 
     public void DiscardQueuedSpell()
     {
         queuedSpell = null;
-        animator.SetBool(IsAttackingHash, false);
+        animator.ResetTrigger(IsAttackingHash);
     }
 }

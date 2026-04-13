@@ -34,8 +34,7 @@ public class P_Health : MonoBehaviour
 
         if (animator != null)
         {
-            animator.SetBool(TookDamageHash, true);
-            StartCoroutine(ResetTakeDamage());
+            animator.SetTrigger(TookDamageHash);
         }
 
         if (currentHealth <= 0)
@@ -64,23 +63,6 @@ public class P_Health : MonoBehaviour
             currentHealth += amount;
             if (currentHealth > maxHealth) currentHealth = maxHealth;
             OnHealthChanged?.Invoke(currentHealth, maxHealth);
-        }
-    }
-
-    private IEnumerator ResetTakeDamage()
-    {
-        yield return new WaitForSeconds(0.5f);
-        if (animator != null)
-        {
-            animator.SetBool(TookDamageHash, false);
-        }
-    }
-
-    public void OnTakeDamageAnimationFinished()
-    {
-        if (animator != null)
-        {
-            animator.SetBool(TookDamageHash, false);
         }
     }
 
