@@ -316,3 +316,5 @@ MonoBehaviour:
   waterMatchClip: {fileID: 8300000, guid: cba00f75ef7a4d24981d4de178a891b7, type: 3}
   earthMatchClip: {fileID: 8300000, guid: ae3e1db43288caf43a2d37ade10aa344, type: 3}
   lightningMatchClip: {fileID: 8300000, guid: 6c4084373d0124245bc37ef2f7ab0643, type: 3}
+  buttonHoverClip: {fileID: 8300000, guid: 9c1074f420e8f6449a5d143acc72b8a2, type: 3}
+  buttonClickClip: {fileID: 8300000, guid: 32bd4819bc151cb44ac401d5e17b76d1, type: 3}

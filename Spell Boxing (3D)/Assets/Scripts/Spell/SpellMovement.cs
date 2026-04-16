@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class SpellMovement : MonoBehaviour
 {
-    [Tooltip("Speed at which the spell travels.")]
     [SerializeField] private float speed = 10f;
 
     private Vector3 direction;

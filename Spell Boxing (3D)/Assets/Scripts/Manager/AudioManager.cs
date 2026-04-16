@@ -1,33 +1,32 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance { get; private set; }
 
-    [Header("Audio Sources")]
     [SerializeField] private AudioSource sfxSource;
     [SerializeField] private AudioSource musicSource;
 
-    [Header("Volume Settings")]
     [Range(0f, 1f)]
     [SerializeField] private float musicVolume = 1.0f;
     [Range(0f, 1f)]
     [SerializeField] private float sfxVolume = 1.0f;
 
-    [Header("SFX Clips")]
     [SerializeField] private AudioClip spellQueuedClip;
     [SerializeField] private AudioClip deathClip;
     [SerializeField] private AudioClip fizzleClip;
 
-    [Header("Music")]
     [SerializeField] private AudioClip backgroundMusicClip;
 
-    [Header("Spell Match Clips")]
     [SerializeField] private AudioClip fireMatchClip;
     [SerializeField] private AudioClip waterMatchClip;
     [SerializeField] private AudioClip earthMatchClip;
     [SerializeField] private AudioClip lightningMatchClip;
 
+    [Header("UI SFX")]
+    [SerializeField] private AudioClip buttonHoverClip;
+    [SerializeField] private AudioClip buttonClickClip;
 
     private void Awake()
     {
@@ -124,6 +123,13 @@ public class AudioManager : MonoBehaviour
         if (clipToPlay != null)
         {
             sfxSource.PlayOneShot(clipToPlay);
+        }
+    }
+    public void PlayButtonClickSFX()
+    {
+        if (buttonClickClip != null)
+        {
+            sfxSource.PlayOneShot(buttonClickClip);
         }
     }
 }

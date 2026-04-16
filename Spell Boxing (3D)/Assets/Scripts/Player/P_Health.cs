@@ -27,19 +27,17 @@ public class P_Health : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
+        
         currentHealth -= damage;
-        Debug.Log($"{gameObject.name} took {damage} damage. Current Health: {currentHealth}");
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
 
         if (animator != null)
         {
-            animator.SetBool(TookDamageHash, true);
-            StartCoroutine(ResetTakeDamage());
+            animator.SetTrigger(TookDamageHash);
         }
 
         if (currentHealth <= 0)
         {
-            Debug.Log($"{gameObject.name} has been defeated!");
             if (animator != null)
             {
                 animator.SetBool(IsDeadHash, true);
@@ -57,20 +55,13 @@ public class P_Health : MonoBehaviour
         }
     }
 
-    private IEnumerator ResetTakeDamage()
+    public void Heal(int amount)
     {
-        yield return new WaitForSeconds(0.5f);
-        if (animator != null)
+        if (currentHealth > 0) // Only heal if they aren't dead
         {
-            animator.SetBool(TookDamageHash, false);
-        }
-    }
-
-    public void OnTakeDamageAnimationFinished()
-    {
-        if (animator != null)
-        {
-            animator.SetBool(TookDamageHash, false);
+            currentHealth += amount;
+            if (currentHealth > maxHealth) currentHealth = maxHealth;
+            OnHealthChanged?.Invoke(currentHealth, maxHealth);
         }
     }
 

@@ -21,46 +21,32 @@ public struct SpellSequence
 
 public class P_Controller : MonoBehaviour
 {
-    [Header("Input Bindings")]
-    [Tooltip("Input binding for the Up direction")]
     [SerializeField] private string upBinding = "<Keyboard>/w";
-
-    [Tooltip("Input binding for the Left direction")]
     [SerializeField] private string leftBinding = "<Keyboard>/a";
 
-    [Tooltip("Input binding for the Down direction")]
     [SerializeField] private string downBinding = "<Keyboard>/s";
 
-    [Tooltip("Input binding for the Right direction")]
     [SerializeField] private string rightBinding = "<Keyboard>/d";
 
-    [Header("Spell Sequences")]
-    [Tooltip("Define combinations of directions to cast specific spells.")]
     [SerializeField] private List<SpellSequence> spellSequences = new List<SpellSequence>();
 
-    [Header("Cast Settings")]
-    [Tooltip("Optional: The transform where spells will spawn. If null, uses the player's position.")]
+    public IReadOnlyList<SpellSequence> SpellSequences => spellSequences;
+
     [SerializeField] private Transform castPoint;
 
-    [Header("Feedback Settings")]
-    [Tooltip("The transform to move for feedback. If null, uses this player's transform.")]
     [SerializeField] private Transform feedbackTarget;
-    [Tooltip("How far the player moves to provide input feedback.")]
     [SerializeField] private float inputFeedbackDistance = 0.5f;
-    [Tooltip("How fast the player moves for input feedback.")]
     [SerializeField] private float inputFeedbackSpeed = 15f;
 
-    [Header("Error Feedback Settings")]
-    [Tooltip("The renderer to flash when an error occurs. If null, tries to find one in children.")]
     [SerializeField] private Renderer playerRenderer;
-    [Tooltip("The color to flash when an incorrect sequence is entered.")]
     [SerializeField] private Color errorFlashColor = Color.red;
-    [Tooltip("How long the error flash lasts.")]
     [SerializeField] private float errorFlashDuration = 0.2f;
 
     public event System.Action OnSpellCast;
+    public event System.Action OnSpellSequencesUpdated;
 
     private GameObject queuedSpell;
+    public GameObject QueuedSpell => queuedSpell;
     public bool HasQueuedSpell => queuedSpell != null;
     private List<InputDirection> currentInputSequence = new List<InputDirection>();
 
@@ -71,6 +57,7 @@ public class P_Controller : MonoBehaviour
     private InputAction castRightAction;
 
     private static readonly int IsAttackingHash = Animator.StringToHash("isAttacking");
+    private static readonly int SpellTypeHash = Animator.StringToHash("spellType");
 
     private Vector3 initialPosition;
     private Coroutine feedbackCoroutine;
@@ -108,6 +95,7 @@ public class P_Controller : MonoBehaviour
         {
             originalColor = playerRenderer.material.color;
         }
+        // Spell sequences are now set by M_Turn at the start of each round.
     }
 
     private void OnEnable()
@@ -125,6 +113,18 @@ public class P_Controller : MonoBehaviour
         castDownAction.Disable();
         castRightAction.Disable();
         currentInputSequence.Clear();
+    }
+
+    private void OnDestroy()
+    {
+        // The OnAttackerChanged subscription is no longer needed here.
+    }
+
+    public void SetSpellSequences(IReadOnlyList<SpellSequence> newSequences)
+    {
+        spellSequences.Clear();
+        spellSequences.AddRange(newSequences);
+        OnSpellSequencesUpdated?.Invoke();
     }
 
     private void OnInputDirection(InputDirection dir)
@@ -272,7 +272,13 @@ public class P_Controller : MonoBehaviour
         Vector3 spawnPos = castPoint != null ? castPoint.position : transform.position;
         Quaternion spawnRot = castPoint != null ? castPoint.rotation : transform.rotation;
 
-        animator.SetBool(IsAttackingHash, true);
+        var spellData = queuedSpell.GetComponent<SpellData>();
+        if (spellData != null)
+        {
+            animator.SetFloat(SpellTypeHash, spellData.SpellAnimationId);
+        }
+
+        animator.SetTrigger(IsAttackingHash);
         Instantiate(queuedSpell, spawnPos, spawnRot);
         queuedSpell = null;
     }
@@ -280,15 +286,6 @@ public class P_Controller : MonoBehaviour
     public void DiscardQueuedSpell()
     {
         queuedSpell = null;
-        animator.SetBool(IsAttackingHash, false);
-    }
-
-    /// <summary>
-    /// This method should be called by an Animation Event at the end of the attack animation.
-    /// It signals that the player is no longer in an attacking state.
-    /// </summary>
-    public void OnAttackAnimationFinished()
-    {
-        animator.SetBool(IsAttackingHash, false);
+        animator.ResetTrigger(IsAttackingHash);
     }
 }

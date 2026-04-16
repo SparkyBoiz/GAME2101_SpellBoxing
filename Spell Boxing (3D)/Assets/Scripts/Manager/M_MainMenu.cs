@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections;
 public class M_MainMenu : MonoBehaviour
 {
     public void StartGame()
@@ -20,6 +21,17 @@ public class M_MainMenu : MonoBehaviour
 
     public void ExitGame()
     {
-        Application.Quit();
+        StartCoroutine(ExitWithDelay());
     }
+
+    private IEnumerator ExitWithDelay()
+    {
+        yield return new WaitForSeconds(1);
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
+    }
+    
 }
