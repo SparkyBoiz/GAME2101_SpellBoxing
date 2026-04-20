@@ -15,6 +15,7 @@ public class SpellCollision : MonoBehaviour
     [SerializeField] public int spellDamage = 20;
 
     [SerializeField] private GameObject destructionEffect;
+    [SerializeField] private float effectDestroyDelay = 2f;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -32,7 +33,8 @@ public class SpellCollision : MonoBehaviour
         {
             if (destructionEffect != null)
             {
-                Instantiate(destructionEffect, transform.position, transform.rotation);
+                GameObject effect = Instantiate(destructionEffect, transform.position, transform.rotation);
+                Destroy(effect, effectDestroyDelay);
             }
 
             if (M_Turn.Instance != null)
