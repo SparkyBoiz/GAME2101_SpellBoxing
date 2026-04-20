@@ -42,6 +42,10 @@ public class P_Controller : MonoBehaviour
     [SerializeField] private Color errorFlashColor = Color.red;
     [SerializeField] private float errorFlashDuration = 0.2f;
 
+    [Header("Animation")]
+    [Tooltip("Make sure this matches the exact name of the Attack state or Blend Tree in your Animator")]
+    [SerializeField] private string attackStateName = "Attack";
+
     public event System.Action OnSpellCast;
     public event System.Action OnSpellSequencesUpdated;
 
@@ -56,7 +60,6 @@ public class P_Controller : MonoBehaviour
     private InputAction castDownAction;
     private InputAction castRightAction;
 
-    private static readonly int IsAttackingHash = Animator.StringToHash("isAttacking");
     private static readonly int SpellTypeHash = Animator.StringToHash("spellType");
 
     private Vector3 initialPosition;
@@ -130,6 +133,10 @@ public class P_Controller : MonoBehaviour
     private void OnInputDirection(InputDirection dir)
     {
         if (HasQueuedSpell) return;
+
+        animator.SetFloat(SpellTypeHash, (float)dir);
+        // Instantly force the animation to play from the very beginning (time 0f)
+        animator.Play(attackStateName, -1, 0f);
 
         currentInputSequence.Add(dir);
 
@@ -272,13 +279,6 @@ public class P_Controller : MonoBehaviour
         Vector3 spawnPos = castPoint != null ? castPoint.position : transform.position;
         Quaternion spawnRot = castPoint != null ? castPoint.rotation : transform.rotation;
 
-        var spellData = queuedSpell.GetComponent<SpellData>();
-        if (spellData != null)
-        {
-            animator.SetFloat(SpellTypeHash, spellData.SpellAnimationId);
-        }
-
-        animator.SetTrigger(IsAttackingHash);
         Instantiate(queuedSpell, spawnPos, spawnRot);
         queuedSpell = null;
     }
@@ -286,6 +286,5 @@ public class P_Controller : MonoBehaviour
     public void DiscardQueuedSpell()
     {
         queuedSpell = null;
-        animator.ResetTrigger(IsAttackingHash);
     }
 }

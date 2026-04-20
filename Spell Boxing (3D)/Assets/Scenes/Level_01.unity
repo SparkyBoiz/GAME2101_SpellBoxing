@@ -3142,6 +3142,7 @@ MonoBehaviour:
   playerRenderer: {fileID: 1356978271}
   errorFlashColor: {r: 1, g: 0, b: 0, a: 1}
   errorFlashDuration: 0.2
+  attackStateName: Attacking
 --- !u!136 &1356978267
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -4061,6 +4062,7 @@ MonoBehaviour:
   playerRenderer: {fileID: 1746579126}
   errorFlashColor: {r: 1, g: 0, b: 0, a: 1}
   errorFlashDuration: 0.2
+  attackStateName: Attacking
 --- !u!1 &1773587584
 GameObject:
   m_ObjectHideFlags: 0
@@ -4485,7 +4487,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 4.13002, y: 0.81999207}
+  m_AnchoredPosition: {x: 4.1300354, y: 0.8200073}
   m_SizeDelta: {x: -364.66003, y: -393.63998}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2068852481
